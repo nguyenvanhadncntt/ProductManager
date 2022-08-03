@@ -71,3 +71,6 @@ INSERT INTO `role` VALUES (1,'ADMIN'),(2,'USER');
 
 INSERT INTO `pm_user`(id, active, created_date, email, first_name, last_name, password, role_id) VALUES (3,true,'2022-08-03 13:03:32','admin@localhost.com','Admin','Admin','$2a$10$n4tVf1F/PE9E.bFlDDikBuSAH9hDa5V5uqqwBYTyoj8BIsFwPEhJy',1)
 ,(4,true,'2022-08-03 13:03:32','user@localhost.com','User','User','$2a$10$BP3dMG0OyXrUVgE0lj/aaeZKlo4bS5rI.97I.P/dv69znZyeykqwG',2);
+
+UPDATE `role` SET name='ROLE_ADMIN' WHERE id=1;
+UPDATE `role` SET name='ROLE_USER' WHERE id=2;

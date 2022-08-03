@@ -154,3 +154,7 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2022-08-03 13:05:03
+
+--  Auto-generated SQL script #202208032000
+UPDATE `role` SET name='ROLE_ADMIN' WHERE id=1;
+UPDATE `role` SET name='ROLE_USER' WHERE id=2;

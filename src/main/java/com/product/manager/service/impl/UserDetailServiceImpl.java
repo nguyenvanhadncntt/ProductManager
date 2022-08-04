@@ -6,6 +6,7 @@ import java.util.Optional;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,7 +20,7 @@ import com.product.manager.entity.Role;
 import com.product.manager.entity.User;
 import com.product.manager.repository.UserRepository;
 
-@Service
+@Service("ProductManagerUserDetailService")
 public class UserDetailServiceImpl implements UserDetailsService {
 
 	@Autowired

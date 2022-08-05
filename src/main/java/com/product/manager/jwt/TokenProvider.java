@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,6 +18,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
+
+import com.product.manager.controller.RoleController;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -28,7 +30,7 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class TokenProvider {
 	
-	private final Logger log = LogManager.getLogger(TokenProvider.class);
+	private final Logger LOGGER = LoggerFactory.getLogger(RoleController.class);
 	
 	@Value("${jwt.secret}")
 	private String secret;
@@ -84,8 +86,8 @@ public class TokenProvider {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(authToken);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
-            log.info("Invalid JWT token.");
-            log.trace("Invalid JWT token trace.", e);
+        	LOGGER.info("Invalid JWT token.");
+            LOGGER.trace("Invalid JWT token trace.", e);
         }
         return false;
     }

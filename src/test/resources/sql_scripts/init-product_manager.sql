@@ -11,13 +11,13 @@ create sequence hibernate_sequence start with 1 increment by 1;
 
 
 create table category (
-    id bigint not null,
+    id bigint not null auto_increment,
     name varchar(255),
     primary key (id)
 );
 
 create table product (
-    id bigint not null,
+    id bigint not null auto_increment,
     created_date timestamp,
     description varchar(255),
     name varchar(255),
@@ -30,13 +30,13 @@ create table product (
 );
 
 create table role (
-    id bigint not null,
+    id bigint not null auto_increment,
     name varchar(255),
     primary key (id)
 );
 
 create table pm_user (
-    id bigint not null,
+    id bigint not null auto_increment,
     active boolean,
     created_date timestamp,
     email varchar(255),

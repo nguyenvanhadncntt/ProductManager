@@ -74,3 +74,5 @@ INSERT INTO `pm_user`(id, active, created_date, email, first_name, last_name, pa
 
 UPDATE `role` SET name='ROLE_ADMIN' WHERE id=1;
 UPDATE `role` SET name='ROLE_USER' WHERE id=2;
+
+INSERT INTO `category` VALUES (1,'Book'),(2,'Laptop'),(3,'Smart Phone'),(4,'Houseware'),(5,'Unknow');

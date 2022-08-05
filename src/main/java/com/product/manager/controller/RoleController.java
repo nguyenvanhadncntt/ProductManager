@@ -32,12 +32,5 @@ public class RoleController {
 		LOGGER.warn("warn - get all Roles");
 		return ResponseEntity.ok(roleService.getAllRoles());
 	}
-	
-	@GetMapping("/temp")
-	@Secured(AuthoritiesConstants.ADMIN)
-	public void getRole() {
-		LOGGER.info("info - Temp");
-		LOGGER.debug("debug - Temp");
-		LOGGER.warn("warn - Temp");
-	}
+
 }

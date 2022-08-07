@@ -35,11 +35,11 @@ public class AuthenticationController {
 		UsernamePasswordAuthenticationToken authenticationToken =
 	            new UsernamePasswordAuthenticationToken(userLogin.getEmail(), userLogin.getPassword());
 
-	        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-	        SecurityContextHolder.getContext().setAuthentication(authentication);
-	        String jwt = tokenProvider.createToken(authentication);
-	        HttpHeaders httpHeaders = new HttpHeaders();
-	        httpHeaders.add(JWTRequestFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
-	        return new ResponseEntity<>(new JWTToken(jwt), httpHeaders, HttpStatus.OK);
+		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		String jwt = tokenProvider.createToken(authentication);
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.add(JWTRequestFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
+		return new ResponseEntity<>(new JWTToken(jwt), httpHeaders, HttpStatus.OK);
 	}
 }

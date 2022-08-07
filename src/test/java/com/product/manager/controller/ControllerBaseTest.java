@@ -16,6 +16,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.product.manager.dto.JWTToken;
 import com.product.manager.dto.UserLoginDTO;
 
@@ -27,6 +28,14 @@ public class ControllerBaseTest {
 	
 	protected final static String AUTHENTICATE_URL = BASE_URL + "authenticate";
 	
+	protected final static String ADMIN_EMAIL = "admin@localhost.com";
+	
+	protected final static String ADMIN_PASSWORD = "admin";
+	
+	protected final static String USER_EMAIL = "user@localhost.com";
+	
+	protected final static String USER_PASSWORD = "user";
+	
     @Autowired
     protected MockMvc mvc;
     
@@ -37,6 +46,7 @@ public class ControllerBaseTest {
 	@BeforeEach
 	public void init() {
 		objectMapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+		objectMapper.registerModule(new JavaTimeModule());
 	    ow = objectMapper.writer().withDefaultPrettyPrinter();
 	}
 	
@@ -50,5 +60,13 @@ public class ControllerBaseTest {
 			return token.getIdToken();
 		}
 		throw new AuthenticationCredentialsNotFoundException(response.getErrorMessage());
+	}
+	
+	protected String getUserToken() throws JsonProcessingException, Exception {
+		return getToken(USER_EMAIL, USER_PASSWORD);
+	}
+	
+	protected String getAdminToken() throws JsonProcessingException, Exception {
+		return getToken(ADMIN_EMAIL, ADMIN_PASSWORD);
 	}
 }

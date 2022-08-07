@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.product.manager.BaseTest;
+import com.product.manager.constant.AuthoritiesConstants;
 import com.product.manager.dto.RoleDTO;
 
 public class RoleServiceTest extends BaseTest {
@@ -19,8 +20,8 @@ public class RoleServiceTest extends BaseTest {
 	void listRolesTest() {
 		List<RoleDTO> roles = roleService.getAllRoles();
 		assertEquals(2, roles.size());
-		assertEquals("ADMIN", roles.get(0).getName());
-		assertEquals("USER", roles.get(1).getName());
+		assertEquals(AuthoritiesConstants.ADMIN, roles.get(0).getName());
+		assertEquals(AuthoritiesConstants.USER, roles.get(1).getName());
 	}
 
 }

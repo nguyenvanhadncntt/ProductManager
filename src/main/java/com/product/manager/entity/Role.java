@@ -20,9 +20,6 @@ public class Role {
 	@Column(name = "name")
 	private String name;
 	
-	@OneToMany(mappedBy = "role")
-	private List<User> users;
-
 	public Role() {
 		super();
 	}

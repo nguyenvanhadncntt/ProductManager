@@ -1,78 +1,80 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-   <property name="LOGS" value="./logs"/>
-   <property name="SERVICE" value="log"/>
+    <property name="LOGS" value="./logs"/>
+    <property name="SERVICE" value="log"/>
 
-   <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
-       <layout class="ch.qos.logback.classic.PatternLayout">
-           <Pattern>
-               %d{ISO8601} %highlight(%-5level) %mdc{requestId:-} %t %C{2}:%L %msg%n%throwable
-           </Pattern>
-       </layout>
-   </appender>
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                %d{ISO8601} %highlight(%-5level) %mdc{requestId:-} %t %C{2}:%L %msg%n%throwable
+            </Pattern>
+        </layout>
+    </appender>
 
-   <appender name="rollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
-       <file>${LOGS}/${SERVICE}-logger.log</file>
-       <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-           <Pattern>%d %p %mdc{requestId:-} %C{2}:%L [%t] %m%n</Pattern>
-       </encoder>
+    <appender name="rollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS}/${SERVICE}-logger.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>%d %p %mdc{requestId:-} %C{2}:%L [%t] %m%n</Pattern>
+        </encoder>
 
-       <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-           <!-- rollover daily and when the file reaches 1 GigaBytes -->
-           <fileNamePattern>${LOGS}/archived/${SERVICE}-logger-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
-           <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-               <maxFileSize>1GB</maxFileSize>
-           </timeBasedFileNamingAndTriggeringPolicy>
-       </rollingPolicy>
-   </appender>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily and when the file reaches 1 GigaBytes -->
+            <fileNamePattern>${LOGS}/archived/${SERVICE}-logger-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>1kb</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
 
-   <root level="DEBUG">
-       <appender-ref ref="rollingFile"/>
-       <appender-ref ref="console"/>
-   </root>
+    <root level="DEBUG">
+        <appender-ref ref="rollingFile"/>
+        <appender-ref ref="console"/>
+    </root>
 
-   <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter">
-       <level value="DEBUG" />
-   </logger>
+    <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter">
+        <level value="DEBUG" />
+    </logger>
 
 </configuration>
-<!--<?xml version="1.0" encoding="UTF-8"?>
-<configuration>
+        <!--<?xml version="1.0" encoding="UTF-8"?>
+        <configuration>
 
-	<appender name="STDOUT"
-		class="ch.qos.logback.core.ConsoleAppender">
-		<encoder>
-			<pattern>
-				%d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level)
-				%logger{36}.%M - %msg%n
-			</pattern>
-		</encoder>
-	</appender>
+            <appender name="STDOUT"
+                class="ch.qos.logback.core.ConsoleAppender">
+                <encoder>
+                    <pattern>
+                        %d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level)
+                        %logger{36}.%M - %msg%n
+                    </pattern>
+                </encoder>
+            </appender>
 
-	<root level="info">
-		<appender-ref ref="STDOUT" />
-	</root>
+            <root level="info">
+                <appender-ref ref="STDOUT" />
+            </root>
 
-	<logger name="com.product.manager.controller.RoleController" additivity="false" 
-		level="warn"> <appender-ref ref="STDOUT" /> </logger> 
-	<property name="LOG_PATH" value="./logs"/>  
-	<appender name="SAVE-TO-FILE"
-		class="ch.qos.logback.core.FileAppender">
+            <logger name="com.product.manager.controller.RoleController" additivity="false"
+                level="warn"> <appender-ref ref="STDOUT" />
+                </logger>
+            <property name="LOG_PATH" value="./logs"/>
+            <appender name="SAVE-TO-FILE"
+                class="ch.qos.logback.core.FileAppender">
 
-		<file>${LOG_PATH}/log.log</file>
+                <file>${LOG_PATH}/log.log</file>
 
-		<encoder
-			class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-			<Pattern>
-				%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n
-			</Pattern>
-		</encoder>
+                <encoder
+                    class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                    <Pattern>
+                        %d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n
+                    </Pattern>
+                </encoder>
 
-	</appender>
+            </appender>
 
-	<logger name="com.product.manager.controller.RoleController"
-		additivity="false" level="debug">
-		<appender-ref ref="SAVE-TO-FILE" />
-	</logger>
+            <logger name="com.product.manager.controller.RoleController"
+                additivity="false" level="debug">
+                <appender-ref ref="STDOUT" />
+                <appender-ref ref="SAVE-TO-FILE" />
+            </logger>
 
-</configuration> -->
+        </configuration> -->

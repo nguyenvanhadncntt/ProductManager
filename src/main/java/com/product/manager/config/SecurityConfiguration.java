@@ -22,7 +22,7 @@ import com.product.manager.jwt.JwtAuthenticationEntryPoint;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	@Qualifier("ProductManagerUserDetailService")
@@ -56,6 +56,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
         .authorizeRequests()
             .antMatchers("/authenticate").permitAll()
+            .antMatchers(
+                    "/v2/api-docs",
+                    "/swagger-resources/**",
+                    "/webjars/**",
+                    "/swagger-ui.html",
+                    "/swagger-ui/index.html",
+                    "/api-docs",
+                    "/swagger-ui/**",
+                    "/v3/**")
+            .permitAll()
             .anyRequest().authenticated()
             .and()
             .exceptionHandling()

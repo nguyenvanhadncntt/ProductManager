@@ -1,11 +1,13 @@
 package com.product.manager.service.impl;
 
-import com.product.manager.dto.ProductDTO;
-import com.product.manager.entity.Category;
-import com.product.manager.entity.Product;
-import com.product.manager.exception.NotFoundException;
-import com.product.manager.repository.CategoryRepository;
-import com.product.manager.repository.ProductRepository;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.math.BigDecimal;
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -13,13 +15,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.math.BigDecimal;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import com.product.manager.dto.ProductDTO;
+import com.product.manager.entity.Category;
+import com.product.manager.entity.Product;
+import com.product.manager.exception.NotFoundException;
+import com.product.manager.repository.CategoryRepository;
+import com.product.manager.repository.ProductRepository;
 
 @ExtendWith({MockitoExtension.class})
 class ProductServiceImplTest {
@@ -41,7 +42,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void getProduct() {
+    void getProduct() throws NotFoundException {
         Category category = new Category(1L, "vehicle");
 
         Product product = new Product();
@@ -60,7 +61,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void createProduct() {
+    void createProduct() throws NotFoundException {
         ProductDTO createdProductDTO = new ProductDTO();
         createdProductDTO.setName("BBB");
         createdProductDTO.setPrice(BigDecimal.valueOf(10));
@@ -89,7 +90,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void updateProduct() {
+    void updateProduct() throws NotFoundException {
         ProductDTO updatedProductDTO = new ProductDTO();
         updatedProductDTO.setName("BBB");
         updatedProductDTO.setPrice(BigDecimal.valueOf(10));
@@ -110,7 +111,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void deleteProduct() {
+    void deleteProduct() throws NotFoundException {
         when(productRepository.existsById(1L)).thenReturn(true);
         productService.deleteProduct(1L);
         verify(productRepository).deleteById(1L);

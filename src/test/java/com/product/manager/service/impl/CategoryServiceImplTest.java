@@ -35,7 +35,7 @@ class CategoryServiceImplTest extends BaseTest {
     }
 
     @Test
-    void getCategory() {
+    void getCategory() throws NotFoundException {
         Category category1 = new Category(1L, "AAA");
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(category1));
 
@@ -58,7 +58,7 @@ class CategoryServiceImplTest extends BaseTest {
     }
 
     @Test
-    void updateCategory() {
+    void updateCategory() throws NotFoundException {
         CategoryDTO categoryDTO = new CategoryDTO();
         categoryDTO.setName("BBB");
         Category category1 = new Category(1L, "AAA");
@@ -87,7 +87,7 @@ class CategoryServiceImplTest extends BaseTest {
     }
 
     @Test
-    void deleteCategory() {
+    void deleteCategory() throws NotFoundException {
         when(categoryRepository.existsById(1L)).thenReturn(true);
         categoryService.deleteCategory(1L);
         verify(categoryRepository).deleteById(1L);

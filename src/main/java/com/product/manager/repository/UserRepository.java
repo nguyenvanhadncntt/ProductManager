@@ -13,6 +13,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 	Optional<User> findByEmail(String email);
+	
+//	Optional<User> findById(Long id);
 
 	List<User> findByRoleName(String roleName);
 

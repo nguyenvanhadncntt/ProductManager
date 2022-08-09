@@ -2,6 +2,7 @@ package com.product.manager.controller;
 
 import com.product.manager.constant.AuthoritiesConstants;
 import com.product.manager.dto.ProductDTO;
+import com.product.manager.exception.NotFoundException;
 import com.product.manager.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,26 +34,26 @@ public class ProductController {
     }
 
     @GetMapping("/api/products/{productId}")
-    public ResponseEntity<ProductDTO> getProduct(@PathVariable("productId") Long productId) {
+    public ResponseEntity<ProductDTO> getProduct(@PathVariable("productId") Long productId) throws NotFoundException {
         ProductDTO productDTO = productService.getProduct(productId);
         return ResponseEntity.ok(productDTO);
     }
 
     @PostMapping("/api/products")
-    public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody ProductDTO product, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody ProductDTO product, UriComponentsBuilder uriComponentsBuilder) throws NotFoundException {
         ProductDTO productDTO = productService.createProduct(product);
         return ResponseEntity.created(uriComponentsBuilder.replacePath("/products/{id}").buildAndExpand(productDTO.getId()).toUri())
                 .body(productDTO);
     }
 
     @PutMapping("/api/products/{productId}")
-    public ResponseEntity<HttpStatus> updateProduct(@PathVariable("productId") Long productId, @Valid @RequestBody ProductDTO product) {
+    public ResponseEntity<HttpStatus> updateProduct(@PathVariable("productId") Long productId, @Valid @RequestBody ProductDTO product) throws NotFoundException {
         productService.updateProduct(productId, product);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/api/products/{productId}")
-    public ResponseEntity<HttpStatus> deleteProduct(@PathVariable("productId") Long productId) {
+    public ResponseEntity<HttpStatus> deleteProduct(@PathVariable("productId") Long productId) throws NotFoundException {
         productService.deleteProduct(productId);
         return ResponseEntity.noContent().build();
     }

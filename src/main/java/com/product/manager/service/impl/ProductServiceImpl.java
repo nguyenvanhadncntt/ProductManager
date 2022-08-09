@@ -1,5 +1,17 @@
 package com.product.manager.service.impl;
 
+import java.io.IOException;
+import java.time.Instant;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.product.manager.convert.impl.ProductCSVConvertToEntity;
 import com.product.manager.dto.ProductDTO;
 import com.product.manager.dto.ProductImportCSVDTO;
@@ -11,17 +23,6 @@ import com.product.manager.repository.CategoryRepository;
 import com.product.manager.repository.ProductRepository;
 import com.product.manager.service.ProductService;
 import com.product.manager.util.CSVUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.time.Instant;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -60,14 +61,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO getProduct(Long productId) {
+    public ProductDTO getProduct(Long productId) throws NotFoundException {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new NotFoundException(String.format("Product with id %s does not exist", productId)));
         return ProductDTO.fromEntity(product);
     }
 
     @Override
-    public ProductDTO createProduct(ProductDTO productDTO) {
+    public ProductDTO createProduct(ProductDTO productDTO) throws NotFoundException {
         List<Product> products = productRepository.findProductByName(productDTO.getName());
         if (!products.isEmpty()) {
             throw new BadRequestException(String.format("Product with name %s is already exist", productDTO.getName()));
@@ -85,7 +86,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void updateProduct(Long productId, ProductDTO productDTO) {
+    public void updateProduct(Long productId, ProductDTO productDTO) throws NotFoundException {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new NotFoundException(String.format("Product with id %s does not exist", productId)));
 
@@ -106,7 +107,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void deleteProduct(Long productId) {
+    public void deleteProduct(Long productId) throws NotFoundException {
         if (!productRepository.existsById(productId)) {
             throw new NotFoundException(String.format("Product with id %s does not exist", productId));
         }

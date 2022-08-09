@@ -1,8 +1,16 @@
 package com.product.manager.service.impl;
 
-import java.io.IOException;
-import java.util.List;
-
+import com.product.manager.convert.impl.ProductCSVConvertToEntity;
+import com.product.manager.dto.ProductDTO;
+import com.product.manager.dto.ProductImportCSVDTO;
+import com.product.manager.entity.Category;
+import com.product.manager.entity.Product;
+import com.product.manager.exception.BadRequestException;
+import com.product.manager.exception.NotFoundException;
+import com.product.manager.repository.CategoryRepository;
+import com.product.manager.repository.ProductRepository;
+import com.product.manager.service.ProductService;
+import com.product.manager.util.CSVUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,12 +18,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.product.manager.convert.impl.ProductCSVConvertToEntity;
-import com.product.manager.dto.ProductImportCSVDTO;
-import com.product.manager.entity.Product;
-import com.product.manager.repository.ProductRepository;
-import com.product.manager.service.ProductService;
-import com.product.manager.util.CSVUtil;
+import java.io.IOException;
+import java.time.Instant;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -27,7 +33,10 @@ public class ProductServiceImpl implements ProductService {
 	
 	@Autowired
 	private ProductRepository productRepository;
-	
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
 	@Override
 	@Transactional
 	public void importProductFromCSVFile(MultipartFile file) {
@@ -42,4 +51,65 @@ public class ProductServiceImpl implements ProductService {
 		}
 	}
 
+    @Override
+    public List<ProductDTO> getAllProducts() {
+        List<ProductDTO> products = productRepository.findAll().stream()
+                .map(ProductDTO::fromEntity)
+                .collect(Collectors.toList());
+        return products;
+    }
+
+    @Override
+    public ProductDTO getProduct(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new NotFoundException(String.format("Product with id %s does not exist", productId)));
+        return ProductDTO.fromEntity(product);
+    }
+
+    @Override
+    public ProductDTO createProduct(ProductDTO productDTO) {
+        List<Product> products = productRepository.findProductByName(productDTO.getName());
+        if (!products.isEmpty()) {
+            throw new BadRequestException(String.format("Product with name %s is already exist", productDTO.getName()));
+        }
+        Product product = ProductDTO.toModel(productDTO);
+        if (productDTO.getCategoryId() != null) {
+            if (!categoryRepository.existsById(productDTO.getCategoryId())) {
+                throw new NotFoundException(String.format("Category with id %s does not exist", productDTO.getCategoryId()));
+            }
+            Category category = categoryRepository.getOne(productDTO.getCategoryId());
+            product.setCategory(category);
+        }
+        productRepository.save(product);
+        return ProductDTO.fromEntity(product);
+    }
+
+    @Override
+    public void updateProduct(Long productId, ProductDTO productDTO) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new NotFoundException(String.format("Product with id %s does not exist", productId)));
+
+        product.setName(productDTO.getName());
+        product.setPrice(productDTO.getPrice());
+        product.setDescription(productDTO.getDescription());
+        if (productDTO.getCategoryId() != null) {
+            if (!categoryRepository.existsById(productDTO.getCategoryId())) {
+                throw new NotFoundException(String.format("Category with id %s does not exist", productDTO.getCategoryId()));
+            }
+            Category category = categoryRepository.getOne(productDTO.getCategoryId());
+            product.setCategory(category);
+        }
+//        product.setUpdatedBy(productDTO.getUpdatedBy());
+        product.setUpdatedDate(Instant.now());
+
+        productRepository.saveAndFlush(product);
+    }
+
+    @Override
+    public void deleteProduct(Long productId) {
+        if (!productRepository.existsById(productId)) {
+            throw new NotFoundException(String.format("Product with id %s does not exist", productId));
+        }
+        productRepository.deleteById(productId);
+    }
 }

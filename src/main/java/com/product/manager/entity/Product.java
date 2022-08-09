@@ -1,7 +1,7 @@
 package com.product.manager.entity;
 
-import java.math.BigDecimal;
-import java.time.Instant;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,9 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import java.math.BigDecimal;
+import java.time.Instant;
 
 @Entity
 @Table(name = "product")

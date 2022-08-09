@@ -31,7 +31,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDTO getCategory(Long categoryId) {
+    public CategoryDTO getCategory(Long categoryId) throws NotFoundException {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new NotFoundException(String.format("Category with id %s does not found", categoryId)));
 
@@ -50,7 +50,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void updateCategory(Long categoryId, CategoryDTO categoryDTO) {
+    public void updateCategory(Long categoryId, CategoryDTO categoryDTO) throws NotFoundException {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new NotFoundException(String.format("Category with id %s does not exist", categoryId)));
 
@@ -59,7 +59,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void deleteCategory(Long categoryId) {
+    public void deleteCategory(Long categoryId) throws NotFoundException {
         if(!categoryRepository.existsById(categoryId)) {
             throw new NotFoundException(String.format("Category with id %s does not exist", categoryId));
         }

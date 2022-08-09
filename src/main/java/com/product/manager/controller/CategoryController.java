@@ -2,6 +2,7 @@ package com.product.manager.controller;
 
 import com.product.manager.constant.AuthoritiesConstants;
 import com.product.manager.dto.CategoryDTO;
+import com.product.manager.exception.NotFoundException;
 import com.product.manager.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,7 +28,7 @@ public class CategoryController {
     }
 
     @GetMapping("/api/categories/{categoryId}")
-    public ResponseEntity<CategoryDTO> getCategory(@PathVariable("categoryId") Long categoryId){
+    public ResponseEntity<CategoryDTO> getCategory(@PathVariable("categoryId") Long categoryId) throws NotFoundException{
         CategoryDTO categoryDTO = categoryService.getCategory(categoryId);
         return ResponseEntity.ok(categoryDTO);
     }
@@ -40,13 +41,13 @@ public class CategoryController {
     }
 
     @PutMapping("/api/categories/{categoryId}")
-    public ResponseEntity<HttpStatus> updateCategory(@PathVariable("categoryId") Long categoryId, @Valid @RequestBody CategoryDTO categoryDTO){
+    public ResponseEntity<HttpStatus> updateCategory(@PathVariable("categoryId") Long categoryId, @Valid @RequestBody CategoryDTO categoryDTO) throws NotFoundException{
         categoryService.updateCategory(categoryId, categoryDTO);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/api/categories/{categoryId}")
-    public ResponseEntity<HttpStatus> updateCategory(@PathVariable("categoryId") Long categoryId){
+    public ResponseEntity<HttpStatus> updateCategory(@PathVariable("categoryId") Long categoryId) throws NotFoundException{
         categoryService.deleteCategory(categoryId);
         return ResponseEntity.noContent().build();
     }

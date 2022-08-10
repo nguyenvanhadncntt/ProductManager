@@ -10,6 +10,7 @@ public class PageUtil {
     public static <T> HttpHeaders createHeaderForPaganation(Page<T> page) {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HEADER_TOTAL_COUNT, Long.toString(page.getTotalElements()));
+        headers.add("Access-Control-Expose-Headers", HEADER_TOTAL_COUNT);
         return headers;
     }
 }

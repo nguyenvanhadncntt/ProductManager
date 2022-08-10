@@ -51,4 +51,21 @@ public class ProductCSVConvertToEntity {
 		
 		return Collections.emptyList();
 	}
+
+	public List<ProductImportCSVDTO> convertEntitiesToDtos(List<Product> products) {
+		if (CollectionUtils.isNotEmpty(products)) {
+			return products.stream().map(this::convertEntityToDto)
+					.collect(Collectors.toList());
+		}
+		return Collections.emptyList();
+	}
+
+	public ProductImportCSVDTO convertEntityToDto(Product product) {
+		ProductImportCSVDTO productImport = new ProductImportCSVDTO();
+		productImport.setCategory(product.getCategory().getName());
+		productImport.setDescription(product.getDescription());
+		productImport.setName(product.getName());
+		productImport.setPrice(product.getPrice());
+		return productImport;
+	}
 }

@@ -5,6 +5,11 @@ import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.opencsv.CSVWriter;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +28,8 @@ import com.product.manager.repository.CategoryRepository;
 import com.product.manager.repository.ProductRepository;
 import com.product.manager.service.ProductService;
 import com.product.manager.util.CSVUtil;
+
+import javax.servlet.http.HttpServletResponse;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -112,5 +119,21 @@ public class ProductServiceImpl implements ProductService {
             throw new NotFoundException(String.format("Product with id %s does not exist", productId));
         }
         productRepository.deleteById(productId);
+    }
+
+    @Override
+    public void exportProductToCSV(HttpServletResponse response) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
+        List<Product> products = productRepository.findAll();
+        if (!products.isEmpty()) {
+            StatefulBeanToCsv<ProductImportCSVDTO> writer =
+                    new StatefulBeanToCsvBuilder<ProductImportCSVDTO>
+                            (response.getWriter())
+                            .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
+                            .withSeparator(CSVWriter.DEFAULT_SEPARATOR)
+                            .withOrderedResults(false).build();
+
+            // write all employees to csv file
+            writer.write(productCSVConvertToEntity.convertEntitiesToDtos(products));
+        }
     }
 }

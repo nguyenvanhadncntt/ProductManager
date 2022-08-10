@@ -4,12 +4,55 @@ services:
     image: mysql:8.0.29
     restart: always
     environment:
-      - MYSQL_DATABASE=root
+      - MYSQL_DATABASE=product_manager
+      - MYSQL_DATABASE=sonarqube
       - MYSQL_ROOT_PASSWORD=root
     ports:
       - '3306:3306'
     volumes:
       - db:/var/lib/mysql
+  sonarqube_service:
+    image: sonarqube:community
+    cpus: 0.5
+    mem_limit: 4096M
+    mem_reservation: 1024M
+    depends_on:
+      - postgres_service
+    ports:
+      - "9000:9000"
+    networks:
+      - sonarnet
+    environment:
+      - sonar.jdbc.url=jdbc:postgresql://postgres_service:5432/sonar
+      - sonar.jdbc.username=postgres
+      - sonar.jdbc.password=postgres
+    volumes:
+      - sonarqube_conf:/opt/sonarqube/conf
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+  postgres_service:
+    image: postgres
+    networks:
+      - sonarnet
+    ports:
+      - "8002:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=sonar
+    volumes:
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
+
+networks:
+  sonarnet:
+    driver: bridge
+
 volumes:
+  sonarqube_conf:
+  sonarqube_data:
+  sonarqube_extensions:
+  postgresql:
+  postgresql_data:
   db:
     driver: local

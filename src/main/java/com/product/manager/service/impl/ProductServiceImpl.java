@@ -22,12 +22,27 @@ import com.product.manager.dto.ProductDTO;
 import com.product.manager.dto.ProductImportCSVDTO;
 import com.product.manager.entity.Category;
 import com.product.manager.entity.Product;
+import com.product.manager.entity.User;
 import com.product.manager.exception.BadRequestException;
 import com.product.manager.exception.NotFoundException;
 import com.product.manager.repository.CategoryRepository;
 import com.product.manager.repository.ProductRepository;
+import com.product.manager.repository.UserRepository;
 import com.product.manager.service.ProductService;
 import com.product.manager.util.CSVUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -45,6 +60,9 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
 	@Override
 	@Transactional
 	public void importProductFromCSVFile(MultipartFile file) {
@@ -60,10 +78,9 @@ public class ProductServiceImpl implements ProductService {
 	}
 
     @Override
-    public List<ProductDTO> getAllProducts() {
-        List<ProductDTO> products = productRepository.findAll().stream()
-                .map(ProductDTO::fromEntity)
-                .collect(Collectors.toList());
+    public Page<ProductDTO> getAllProducts(Pageable pageable) {
+        Page<ProductDTO> products = productRepository.searchProducts(pageable)
+                .map(ProductDTO::fromEntity);
         return products;
     }
 
@@ -75,12 +92,19 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO createProduct(ProductDTO productDTO) throws NotFoundException {
+    public ProductDTO createProduct(ProductDTO productDTO, String email) throws NotFoundException {
         List<Product> products = productRepository.findProductByName(productDTO.getName());
         if (!products.isEmpty()) {
             throw new BadRequestException(String.format("Product with name %s is already exist", productDTO.getName()));
         }
         Product product = ProductDTO.toModel(productDTO);
+
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            product.setCreatedBy(user);
+        }
+
         if (productDTO.getCategoryId() != null) {
             if (!categoryRepository.existsById(productDTO.getCategoryId())) {
                 throw new NotFoundException(String.format("Category with id %s does not exist", productDTO.getCategoryId()));
@@ -93,13 +117,20 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void updateProduct(Long productId, ProductDTO productDTO) throws NotFoundException {
+    public void updateProduct(Long productId, ProductDTO productDTO, String emailUser) throws NotFoundException {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new NotFoundException(String.format("Product with id %s does not exist", productId)));
 
         product.setName(productDTO.getName());
         product.setPrice(productDTO.getPrice());
         product.setDescription(productDTO.getDescription());
+
+        Optional<User> userOptional = userRepository.findByEmail(emailUser);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            product.setUpdatedBy(user);
+        }
+
         if (productDTO.getCategoryId() != null) {
             if (!categoryRepository.existsById(productDTO.getCategoryId())) {
                 throw new NotFoundException(String.format("Category with id %s does not exist", productDTO.getCategoryId()));
@@ -107,7 +138,6 @@ public class ProductServiceImpl implements ProductService {
             Category category = categoryRepository.getOne(productDTO.getCategoryId());
             product.setCategory(category);
         }
-//        product.setUpdatedBy(productDTO.getUpdatedBy());
         product.setUpdatedDate(Instant.now());
 
         productRepository.saveAndFlush(product);

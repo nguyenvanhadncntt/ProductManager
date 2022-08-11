@@ -1,12 +1,12 @@
 package com.product.manager.dto;
 
-import com.product.manager.entity.Product;
-import com.product.manager.entity.User;
-
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
+
+import javax.validation.constraints.NotNull;
+
+import com.product.manager.entity.Product;
 
 public class ProductDTO implements Serializable {
 
@@ -26,9 +26,9 @@ public class ProductDTO implements Serializable {
 
     private Instant updatedDate;
 
-    private User createdBy;
+    private UserDTO createdBy;
 
-    private User updatedBy;
+    private UserDTO updatedBy;
 
     private Long categoryId;
 
@@ -36,7 +36,8 @@ public class ProductDTO implements Serializable {
 
     }
 
-    public ProductDTO(Long id, String name, BigDecimal price, String description, Instant createdDate, Instant updatedDate, User createdBy, User updatedBy, Long categoryId) {
+    public ProductDTO(Long id, String name, BigDecimal price, String description, Instant createdDate, 
+    		Instant updatedDate, UserDTO createdBy, UserDTO updatedBy, Long categoryId) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -96,19 +97,19 @@ public class ProductDTO implements Serializable {
         this.updatedDate = updatedDate;
     }
 
-    public User getCreatedBy() {
+    public UserDTO getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(User createdBy) {
+    public void setCreatedBy(UserDTO createdBy) {
         this.createdBy = createdBy;
     }
 
-    public User getUpdatedBy() {
+    public UserDTO getUpdatedBy() {
         return updatedBy;
     }
 
-    public void setUpdatedBy(User updatedBy) {
+    public void setUpdatedBy(UserDTO updatedBy) {
         this.updatedBy = updatedBy;
     }
 
@@ -125,7 +126,6 @@ public class ProductDTO implements Serializable {
         productDTO.setId(product.getId());
         productDTO.setName(product.getName());
         productDTO.setPrice(product.getPrice());
-        productDTO.setCreatedBy(product.getCreatedBy());
         productDTO.setDescription(product.getDescription());
         productDTO.setCreatedDate(product.getCreatedDate());
         productDTO.setUpdatedDate(product.getUpdatedDate());

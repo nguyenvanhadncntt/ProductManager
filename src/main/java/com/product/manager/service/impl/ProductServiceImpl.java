@@ -3,21 +3,26 @@ package com.product.manager.service.impl;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.opencsv.CSVWriter;
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.product.manager.convert.impl.ProductCSVConvertToEntity;
+import com.product.manager.convert.impl.UserConvert;
 import com.product.manager.dto.ProductDTO;
 import com.product.manager.dto.ProductImportCSVDTO;
 import com.product.manager.entity.Category;
@@ -30,21 +35,6 @@ import com.product.manager.repository.ProductRepository;
 import com.product.manager.repository.UserRepository;
 import com.product.manager.service.ProductService;
 import com.product.manager.util.CSVUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.time.Instant;
-import java.util.List;
-import java.util.Optional;
-
-import javax.servlet.http.HttpServletResponse;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -62,6 +52,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
+    private UserConvert userConvert;
 
 	@Override
 	@Transactional
@@ -80,7 +73,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Page<ProductDTO> getAllProducts(Pageable pageable) {
         Page<ProductDTO> products = productRepository.searchProducts(pageable)
-                .map(ProductDTO::fromEntity);
+                .map(product -> {
+                	ProductDTO productDto = ProductDTO.fromEntity(product);
+                	productDto.setCreatedBy(userConvert.convertEntityToDTO(product.getCreatedBy()));
+                	return productDto;
+                });
         return products;
     }
 
@@ -88,7 +85,9 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO getProduct(Long productId) throws NotFoundException {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new NotFoundException(String.format("Product with id %s does not exist", productId)));
-        return ProductDTO.fromEntity(product);
+        var productDto = ProductDTO.fromEntity(product);
+        productDto.setCreatedBy(userConvert.convertEntityToDTO(product.getCreatedBy()));
+        return productDto;
     }
 
     @Override
@@ -112,8 +111,10 @@ public class ProductServiceImpl implements ProductService {
             Category category = categoryRepository.getOne(productDTO.getCategoryId());
             product.setCategory(category);
         }
-        productRepository.save(product);
-        return ProductDTO.fromEntity(product);
+        product = productRepository.save(product);
+        var productDto = ProductDTO.fromEntity(product);
+        productDto.setCreatedBy(userConvert.convertEntityToDTO(product.getUpdatedBy()));
+        return productDto;
     }
 
     @Override

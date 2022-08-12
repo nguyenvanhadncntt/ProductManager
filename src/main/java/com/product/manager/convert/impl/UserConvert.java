@@ -25,15 +25,18 @@ public class UserConvert implements EntityConvert<User, UserDTO> {
 
     @Override
     public UserDTO convertEntityToDTO(User entity) {
-        UserDTO userDTO = new UserDTO();
-        userDTO.setActive(entity.getActive());
-        userDTO.setEmail(entity.getEmail());
-        userDTO.setId(entity.getId());
-        userDTO.setCreatedDate(entity.getCreatedDate());
-        userDTO.setRole(entity.getRole().getName());
-        userDTO.setFirstName(entity.getFirstName());
-        userDTO.setLastName(entity.getLastName());
-        return userDTO;
+        if (entity != null) {
+            UserDTO userDTO = new UserDTO();
+            userDTO.setActive(entity.getActive());
+            userDTO.setEmail(entity.getEmail());
+            userDTO.setId(entity.getId());
+            userDTO.setCreatedDate(entity.getCreatedDate());
+            userDTO.setRole(entity.getRole().getName());
+            userDTO.setFirstName(entity.getFirstName());
+            userDTO.setLastName(entity.getLastName());
+            return userDTO;
+        }
+        return null;
     }
 
     @Override

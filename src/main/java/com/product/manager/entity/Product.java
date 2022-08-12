@@ -41,12 +41,12 @@ public class Product {
 	@Column(name = "updated_date")
 	private Instant updatedDate = Instant.now();
 	
-	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+//	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "created_by")
 	private User createdBy;
 	
-	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+//	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "updated_by")
 	private User updatedBy;
